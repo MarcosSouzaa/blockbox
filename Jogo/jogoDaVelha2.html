@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Jogo da velha</title>
+	<style>
+		body {
+			font-family: Arial, sans-serif;
+            background-color: #89e0e3;
+		}
+
+		#board {
+			display: flex;
+			flex-wrap: wrap;
+			width: 240px;
+			height: 240px;            
+            margin-left: auto;
+            margin-right: auto;
+           
+		}
+
+		.row {
+			display: flex;            
+			width: 100%;
+			height: 33.33%;
+            background-color: rgb(0, 21, 255);
+		}
+
+		.cell {
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			width: 33.33%;
+			height: 100%;
+			border: 1px solid #ccc;
+			box-sizing: border-box;
+			cursor: pointer;
+			font-size: 48px;
+            color: brown;
+		}
+
+		#reset {
+			margin-top: 20px;
+			padding: 10px 20px;
+			font-size: 20px;         
+                                
+		}
+
+		#winner {
+			font-size: 24px;
+			font-weight: bold;
+			margin-top: 20px;
+            color: brown;
+		}
+	</style>
+</head>
+<body>
+
+   <h1 align="center">Jogo da Velha</h1>
+
+	<div id="board">
+		<div class="row">
+			<div class="cell" data-cell-index="0"></div>
+			<div class="cell" data-cell-index="1"></div>
+			<div class="cell" data-cell-index="2"></div>
+		</div>
+		<div class="row">
+			<div class="cell" data-cell-index="3"></div>
+			<div class="cell" data-cell-index="4"></div>
+			<div class="cell" data-cell-index="5"></div>
+		</div>
+		<div class="row">
+			<div class="cell" data-cell-index="6"></div>
+			<div class="cell" data-cell-index="7"></div>
+			<div class="cell" data-cell-index="8"></div>
+		</div>
+	</div>
+	<button id="reset">Reset</button>
+	<div id="winner"></div>
+	<audio id="winSound" src="/Jogos/midia/win.mp3" preload="auto"></audio>
+	<script>
+		const board = document.getElementById('board');
+		const cells = document.querySelectorAll('.cell');
+		const resetButton = document.getElementById('reset');
+		const winnerElement = document.getElementById('winner');
+		const winSound = document.getElementById('winSound');
+		let currentPlayer = 'X';
+		let gameEnded = false;
+
+		cells.forEach(cell => {
+			cell.addEventListener('click', handleCellClick);
+		});
+
+		resetButton.addEventListener('click', handleResetClick);
+
+		function handleCellClick(event) {
+			if (gameEnded) return;
+
+			const cell = event.target;
+			const cellIndex = parseInt(cell.dataset.cellIndex);
+
+			if (cell.innerText!== '') return;
+
+			cell.innerText = currentPlayer;
+			checkWin(currentPlayer, cellIndex);
+
+			currentPlayer = currentPlayer === 'X'? 'O' : 'X';
+		}
+
+		function checkWin(player, cellIndex) {
+			const winConditions = [
+				[0, 1, 2], [3, 4, 5], [6, 7, 8], // rows
+				[0, 3, 6], [1, 4, 7], [2, 5, 8], // columns
+				[0, 4, 8], [2, 4, 6] // diagonals
+			];
+
+			winConditions.forEach(condition => {
+				if (condition.includes(cellIndex) && condition.every(index => cells[index].innerText === player)) {
+					gameEnded = true;
+					winnerElement.innerText = `Quem venceu foi : ${player}!`;
+					setTimeout(() => {
+						winSound.play();
+					}, 1000);
+				}
+			});
+		}
+
+		function handleResetClick() {
+			currentPlayer = 'X';
+			gameEnded = false;
+			winnerElement.innerText = '';
+
+			cells.forEach(cell => {
+				cell.innerText = '';
+			});
+		}
+	</script>
+</body>
+</html>

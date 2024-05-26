@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Quizz de Futebol Brasileiro</title>
+    <style>
+      body {
+        background-color: black;
+        color: white;
+        font-family: Arial, sans-serif;
+      }
+
+      .container {
+        width: 80%;
+        margin: 0 auto;
+        text-align: left;
+      }
+
+      ul {
+        list-style: none;
+        padding: 0;
+      }
+
+      li {
+        margin-bottom: 10px;
+      }
+
+      input[type="radio"] {
+        margin-right: 10px;
+      }
+
+      p {
+        display: none;
+        margin-top: 5px;
+        color: green;
+      }
+
+      .correct {
+        color: green;
+      }
+
+      .incorrect {
+        color: red;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>Quizz de Futebol Brasileiro</h1>
+    </div>
+    <script>
+      const questions = [
+        {
+          question: "Qual é o time mais vezes campeão brasileiro?",
+          answers: [
+            { text: "Palmeiras", correct: true },
+            { text: "Corinthians", correct: false },
+            { text: "Santos", correct: false },
+            { text: "Flamengo", correct: false },
+          ],
+        },
+        {
+          question: "Quem é o maior artilheiro da seleção brasileira?",
+          answers: [
+            { text: "Pelé", correct: true },
+            { text: "Ronaldo", correct: false },
+            { text: "Neymar", correct: false },
+            { text: "Gabriel Jesus", correct: false },
+          ],
+        },
+        {
+          question: "Qual é o maior estádio do Brasil?",
+          answers: [
+            { text: "Maracanã", correct: true },
+            { text: "Arena Corinthians", correct: false },
+            { text: "Estádio do Mineirão", correct: false },
+            { text: "Estádio do Morumbi", correct: false },
+          ],
+        },
+        {
+          question: "Quem é o treinador mais vezes campeão brasileiro?",
+          answers: [
+            { text: "Luis Felipe Scolari", correct: true },
+            { text: "Tite", correct: false },
+            { text: "Vanderlei Luxemburgo", correct: false },
+            { text: "Muricy Ramalho", correct: false },
+          ],
+        },
+      ];
+
+      const quiz = document.querySelector(".container");
+      let currentQuestion = 0;
+      let score = 0;
+
+      function showQuestion() {
+        const questionEl = document.createElement("h2");
+        questionEl.textContent = questions[currentQuestion].question;
+        quiz.appendChild(questionEl);
+
+        questions[currentQuestion].answers.forEach((answer) => {
+          const answerEl = document.createElement("li");
+          const inputEl = document.createElement("input");
+          inputEl.type = "radio";
+          inputEl.name = "question";
+          inputEl.id = `q${currentQuestion}a${
+            questions[currentQuestion].answers.indexOf(answer) + 1
+          }`;
+          inputEl.value = answer.text;
+          inputEl.addEventListener("change", checkAnswer);
+          answerEl.appendChild(inputEl);
+          const labelEl = document.createElement("label");
+          labelEl.htmlFor = `q${currentQuestion}a${
+            questions[currentQuestion].answers.indexOf(answer) + 1
+          }`;
+          labelEl.textContent = answer.text;
+          answerEl.appendChild(labelEl);
+          quiz.appendChild(answerEl);
+        });
+      }
+
+      function checkAnswer() {
+        const selectedAnswer = document.querySelector(
+          "input[name='question']:checked"
+        );
+        if (selectedAnswer) {
+          const answerIndex = parseInt(selectedAnswer.id.split("a")[1]) - 1;
+          const correctAnswer =
+            questions[currentQuestion].answers[answerIndex].correct;
+          if (correctAnswer) {
+            score++;
+            selectedAnswer.parentElement.classList.add("correct");
+          } else {
+            selectedAnswer.parentElement.classList.add("incorrect");
+          }
+          setTimeout(() => {
+            selectedAnswer.parentElement.classList.remove(
+              "correct",
+              "incorrect"
+            );
+            currentQuestion++;
+            if (currentQuestion < questions.length) {
+              showQuestion();
+            } else {
+              showResult();
+            }
+          }, 1000);
+        }
+      }
+
+      function showResult() {
+        const resultEl = document.createElement("h2");
+        resultEl.textContent = `Você acertou ${score}/${questions.length} perguntas!`;
+        quiz.appendChild(resultEl);
+      }
+
+      showQuestion();
+    </script>
+  </body>
+</html>
